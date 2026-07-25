@@ -24,6 +24,7 @@ class CampaignPost extends Model
         'is_edited',
         'is_regenerated',
         'regeneration_count',
+        'boost_recommended'
     ];
 
     protected $casts = [
@@ -32,6 +33,7 @@ class CampaignPost extends Model
         'is_edited' => 'boolean',
         'is_regenerated' => 'boolean',
         'regeneration_count' => 'integer',
+        'boost_recommended' => 'boolean',
     ];
 
     public function campaign(): BelongsTo

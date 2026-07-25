@@ -14,6 +14,7 @@ class CampaignGenerationService
         $compiledPrompt = null;
         $promptVersion = null;
         $result = null;
+        $rawResponse = null;
         $latency = 0;
 
         try {
@@ -74,25 +75,66 @@ class CampaignGenerationService
                     )
                 );
 
-            /*
-            |--------------------------------------------------------------------------
-            | Keep the original format-mode value
-            |--------------------------------------------------------------------------
-            |
-            | This value is still used later by the application's existing
-            | media-type validation.
-            |
-            */
+        /*
+        |--------------------------------------------------------------------------
+        | Resolve selected content formats
+        |--------------------------------------------------------------------------
+        */
 
-            $campaignFormatMode =
-                $snapshotCampaign['format_mode']
-                ?? $campaign->format_mode
-                ?? 'Let the system decide';
+        $campaignFormatModes =
+            $snapshotCampaign['format_modes']
+            ?? $campaign->format_modes
+            ?? ['system_decide'];
 
-            $campaignMood =
-                $snapshotCampaign['mood']
-                ?? $campaign->mood
-                ?? null;
+        if (! is_array($campaignFormatModes)) {
+            $campaignFormatModes = [
+                $campaignFormatModes,
+            ];
+        }
+
+        $campaignFormatModes =
+            array_values(
+                array_unique(
+                    array_filter(
+                        array_map(
+                            static fn (mixed $format): string =>
+                                strtolower(trim((string) $format)),
+                            $campaignFormatModes
+                        )
+                    )
+                )
+            );
+
+        if ($campaignFormatModes === []) {
+            $campaignFormatModes = [
+                'system_decide',
+            ];
+        }
+
+        $allowedRequestedFormats = [
+            'image',
+            'carousel',
+            'reel',
+            'system_decide',
+        ];
+
+        foreach ($campaignFormatModes as $formatMode) {
+            if (! in_array($formatMode, $allowedRequestedFormats, true)) {
+                throw new \Exception(
+                    'Campaign contains an invalid selected content format: ' .
+                    $formatMode
+                );
+            }
+        }
+
+        if (
+            in_array('system_decide', $campaignFormatModes, true) &&
+            count($campaignFormatModes) > 1
+        ) {
+            throw new \Exception(
+                '"Let the system decide" cannot be combined with specific content formats.'
+            );
+        }
 
             $campaignChannels =
                 $snapshotCampaign['channels']
@@ -166,58 +208,6 @@ class CampaignGenerationService
 
                     default =>
                         $rawObjective,
-                };
-
-            $normalizedFormatMode =
-                match ($campaignFormatMode) {
-                    'Images only',
-                    'images_only' =>
-                        'images_only',
-
-                    'Reels only',
-                    'reels_only' =>
-                        'reels_only',
-
-                    'Carousels only',
-                    'carousels_only' =>
-                        'carousels_only',
-
-                    'Let the system decide',
-                    'system_decide' =>
-                        'system_decide',
-
-                    default =>
-                        'system_decide',
-                };
-
-            $normalizedMood =
-                match ($campaignMood) {
-                    'Celebratory / festive',
-                    'celebratory' =>
-                        'celebratory',
-
-                    'Urgent / limited-time',
-                    'urgent' =>
-                        'urgent',
-
-                    'Warm / heartfelt',
-                    'warm' =>
-                        'warm',
-
-                    'Exciting / hype',
-                    'exciting' =>
-                        'exciting',
-
-                    'Informative / helpful',
-                    'informative' =>
-                        'informative',
-
-                    'Inspiring / motivational',
-                    'inspiring' =>
-                        'inspiring',
-
-                    default =>
-                        null,
                 };
 
             /*
@@ -298,6 +288,7 @@ class CampaignGenerationService
                         'percentage' =>
                             'percentage',
 
+                        'Amount discount',
                         'Fixed amount discount',
                         'amount' =>
                             'amount',
@@ -310,10 +301,12 @@ class CampaignGenerationService
                         'buy_x_get_y' =>
                             'buy_x_get_y',
 
+                        'Gift with purchase',
                         'Free gift',
                         'gift' =>
                             'gift',
-
+                        
+                        'Bundle price',
                         'Bundle',
                         'bundle' =>
                             'bundle',
@@ -494,10 +487,6 @@ class CampaignGenerationService
                 ],
 
                 'campaign' => [
-                    'topic' =>
-                        $snapshotCampaign['topic']
-                        ?? $snapshotCampaign['name']
-                        ?? $campaign->name,
 
                     'objective' =>
                         $normalizedObjective,
@@ -516,14 +505,11 @@ class CampaignGenerationService
                     'channels' =>
                         $campaignChannels,
 
-                    'format_mode' =>
-                        $normalizedFormatMode,
+                    'format_modes' => 
+                        $campaignFormatModes,
 
                     'material_count' =>
                         $requestedPostsCount,
-
-                    'mood' =>
-                        $normalizedMood,
 
                     'start_date' =>
                         $campaignStartDate,
@@ -577,7 +563,6 @@ class CampaignGenerationService
             $latency =
                 (int) ((microtime(true) - $startedAt) * 1000);
                 
-                \Log::info('=== CLAUDE RAW RESPONSE ===');
             $rawResponse =
                 $result['content'] ?? null;
 
@@ -599,7 +584,7 @@ class CampaignGenerationService
                         $rawResponse
                     );
 
-                    $allowedChannels =
+                $allowedChannels =
                     array_values(
                         array_intersect(
                             [
@@ -686,24 +671,30 @@ class CampaignGenerationService
                         'Generated post #' . ($index + 1) . ' has an invalid media type.'
                     );
                 }
-
-                if ($campaignFormatMode === 'Images only' && $mediaType !== 'image') {
+                $systemDecidesFormat =
+                in_array(
+                    'system_decide',
+                    $campaignFormatModes,
+                    true
+                );
+            
+                if (
+                    ! $systemDecidesFormat &&
+                    ! in_array(
+                        $mediaType,
+                        $campaignFormatModes,
+                        true
+                    )
+                ) {
                     throw new \Exception(
-                        'Generated post #' . ($index + 1) . ' violates the Images only format mode.'
+                        'Generated post #' .
+                        ($index + 1) .
+                        ' uses the "' .
+                        $mediaType .
+                        '" format, which was not selected.'
                     );
                 }
 
-                if ($campaignFormatMode === 'Reels only' && $mediaType !== 'reel') {
-                    throw new \Exception(
-                        'Generated post #' . ($index + 1) . ' violates the Reels only format mode.'
-                    );
-                }
-
-                if ($campaignFormatMode === 'Carousels only' && $mediaType !== 'carousel') {
-                    throw new \Exception(
-                        'Generated post #' . ($index + 1) . ' violates the Carousels only format mode.'
-                    );
-                }
             }
 
             $posts = collect($posts)
@@ -747,6 +738,9 @@ class CampaignGenerationService
 
                     'creative_direction' =>
                         $post['creative_direction'] ?? '',
+
+                    'boost_recommended' =>
+                        $post['boost_recommended'] ?? false,
 
                     'is_edited' => false,
                 ]);
@@ -836,7 +830,7 @@ class CampaignGenerationService
                         $compiledPrompt,
 
                     'response' =>
-                        $result['content'] ?? null,
+                        $rawResponse,
 
                     'input_tokens' =>
                         $result['input_tokens'] ?? 0,

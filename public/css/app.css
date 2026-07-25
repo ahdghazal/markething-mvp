@@ -2432,8 +2432,6 @@ body{
 }
 
 .post-number {
-    width: 46px;
-    height: 46px;
     border-radius: 16px;
     background: var(--gradient);
     color: white;
@@ -6497,4 +6495,52 @@ PROMPT EDITOR FINAL FIX
 .page-item.disabled .page-link {
     opacity: 0.45;
     cursor: not-allowed;
+}
+
+.campaign-description {
+
+    height: 120px;
+}
+
+.campaign-conditions {
+    grid-column: 1 / -1;
+}
+
+.form-textarea {
+    padding: 5px;
+}
+
+.text-rtl{
+    direction: rtl;
+}
+
+.channel-checkbox input[type="checkbox"] {
+    accent-color: var(--primary);
+}
+
+.campaign-post-actions button, .campaign-post-actions span{
+    margin-bottom: 5px;
+
+}
+
+.post-header {
+    text-align: end;
+}
+
+.boost-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(108, 76, 241, 0.12);
+    color: var(--primary-color);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.boost{
+    background: rgba(68, 117, 239, 0.1);
+    color: #448eef;
+    margin-right: 5px;
 }

@@ -983,25 +983,26 @@
                 </div>
 
                 <div class="client-step-actions">
+                    <a
+                    href="{{ route('agency.clients.index') }}"
+                    class="btn btn-secondary"
+                    data-unsaved-leave-link
+                >
+                    Cancel
+                </a>
 
-                    <button
+
+                    <div class="client-step-actions-right">
+
+
+                        <button
                         class="btn btn-secondary"
                         type="button"
                         data-prev-step
                     >
                         Back
                     </button>
-
-                    <div class="client-step-actions-right">
-
-                        <a
-                            href="{{ route('agency.clients.index') }}"
-                            class="btn btn-secondary"
-                            data-unsaved-leave-link
-                        >
-                            Cancel
-                        </a>
-
+                    
                         <button
                             class="btn btn-primary"
                             type="button"

@@ -133,6 +133,13 @@ class AIResponseParser
                             $post,
                             $creativeBrief
                         ),
+
+                    'boost_recommended' =>
+                        (bool) data_get(
+                            $post,
+                            'boost.recommended',
+                            false
+                        ),
                 ];
             })
             ->all();

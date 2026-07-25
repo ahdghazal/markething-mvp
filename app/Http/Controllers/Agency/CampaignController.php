@@ -130,7 +130,7 @@ class CampaignController extends Controller
             'start_date' => $startDate->toDateString(),
             'end_date' => $endDate->toDateString(),
 
-            'format_mode' => $request->format_mode,
+            'format_modes' => $request->format_modes,
             'mood' => $request->mood,
 
             'channels' => $channels,
@@ -169,7 +169,7 @@ class CampaignController extends Controller
 
                     'conversion_methods' => $conversionMethods,
 
-                    'format_mode' => $request->format_mode,
+                    'format_modes' => $request->format_modes,
                     'mood' => $request->mood,
 
                     'start_date' => $startDate->toDateString(),

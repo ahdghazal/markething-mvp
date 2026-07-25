@@ -19,7 +19,7 @@
     $campaignSnapshot = $snapshot['campaign'] ?? [];
     $offer = $campaignSnapshot['offer'] ?? [];
     $conversionMethods = $campaignSnapshot['conversion_methods'] ?? [];
-    $formatMode = $campaignSnapshot['format_mode'] ?? $campaign->format_mode ?? null;
+    $formatModes = $campaignSnapshot['format_modes'] ?? $campaign->format_modes ?? null;
     $mood = $campaignSnapshot['mood'] ?? $campaign->mood ?? null;
 
     $channelCounts = $campaign->posts
@@ -143,25 +143,27 @@
 
                     <div class="campaign-post-top">
 
-                        <div>
-                            <span class="post-number">
-                                Post #{{ $post->sequence_number }}
-                            </span>
 
-                            <h3>
-                                {{ $post->summary ?: 'Generated post' }}
-                            </h3>
-
-                            <p>
-                                <strong>{{ ucfirst($post->channel) }}</strong>
-                                ·
-                                {{ ucfirst($post->media_type) }}
-                                ·
-                                {{ $post->scheduled_date?->format('M d, Y') }}
-                            </p>
-                        </div>
 
                         <div class="campaign-post-actions">
+                          
+                            <button
+                                class="mini-btn"
+                                type="button"
+                                data-open-modal="postModal{{ $post->id }}"
+                            >
+                                View / Edit
+                            </button>
+
+                            <button
+                            class="mini-btn"
+                            type="button"
+                            data-card-copy-post
+                            data-caption="{{ e($post->caption) }}"
+                            data-hashtags="{{ e($post->hashtags) }}"
+                        >
+                            Copy
+                        </button>
 
                             @if ($post->is_edited)
                                 <span class="edited-pill">
@@ -175,29 +177,36 @@
                                 </span>
                             @endif
 
-                            <button
-                                class="mini-btn"
-                                type="button"
-                                data-card-copy-post
-                                data-caption="{{ e($post->caption) }}"
-                                data-hashtags="{{ e($post->hashtags) }}"
-                            >
-                                Copy
-                            </button>
 
-                            <button
-                                class="mini-btn"
-                                type="button"
-                                data-open-modal="postModal{{ $post->id }}"
-                            >
-                                View / Edit
-                            </button>
 
+                        </div>
+
+                        <div class="post-header">
+                            @if($post->boost_recommended)
+                                <span class="edited-pill boost">
+                                    Recommended for Boosting
+                                </span>
+                            @endif
+                            <span class="post-number">
+                                Post #{{ $post->sequence_number }}
+                            </span>
+
+                            <h3 class="text-rtl">
+                                {{ $post->summary ?: 'Generated post' }}
+                            </h3>
+
+                            <p>
+                                <strong>{{ ucfirst($post->channel) }}</strong>
+                                ·
+                                {{ ucfirst($post->media_type) }}
+                                ·
+                                {{ $post->scheduled_date?->format('M d, Y') }}
+                            </p>
                         </div>
 
                     </div>
 
-                    <div class="post-preview">
+                    <div class="post-preview text-rtl">
                         <p>
                             {{ \Illuminate\Support\Str::limit($post->caption, 260) }}
                         </p>
@@ -210,7 +219,7 @@
                             <strong>{{ ucfirst($post->media_type) }}</strong>
                         </div>
 
-                        <div>
+                        <div class="text-rtl">
                             <span>Hashtags</span>
                             <strong>{{ \Illuminate\Support\Str::limit($post->hashtags, 50) }}</strong>
                         </div>
@@ -275,7 +284,7 @@
                                 <span>Caption</span>
 
                                 <textarea
-                                    class="generated-output-textarea"
+                                    class="generated-output-textarea text-rtl"
                                     rows="8"
                                     name="caption"
                                 >{{ $post->caption }}</textarea>
@@ -285,7 +294,7 @@
                                 <span>Creative Direction</span>
 
                                 <textarea
-                                    class="generated-output-textarea"
+                                    class="generated-output-textarea text-rtl"
                                     rows="5"
                                     name="creative_direction"
                                 >{{ $post->creative_direction }}</textarea>
@@ -295,7 +304,7 @@
                                 <span>Hashtags</span>
 
                                 <textarea
-                                    class="generated-output-textarea"
+                                    class="generated-output-textarea text-rtl"
                                     rows="4"
                                     name="hashtags"
                                 >{{ $post->hashtags }}</textarea>
@@ -391,10 +400,22 @@
                         <strong>{{ $campaign->objective }}</strong>
                     </div>
 
-                    <div class="summary-row">
-                        <span>Format</span>
-                        <strong>{{ $formatMode ?: 'Not specified' }}</strong>
-                    </div>
+                    @php
+                        $formatLabels = [
+                            'image' => 'Image',
+                            'carousel' => 'Carousel',
+                            'reel' => 'Reel',
+                            'system_decide' => 'Let the system decide',
+                        ];
+                    @endphp
+
+                    <strong>
+                        {{
+                            !empty($formatModes)
+                                ? implode(', ', array_map(fn ($mode) => $formatLabels[$mode] ?? $mode, $formatModes))
+                                : 'Not specified'
+                        }}
+                    </strong>
 
                     <div class="summary-row">
                         <span>Mood</span>

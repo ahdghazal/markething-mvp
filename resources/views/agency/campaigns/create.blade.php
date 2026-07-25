@@ -43,142 +43,6 @@
 
                 <div class="section-header">
                     <div>
-                        <h2 class="section-title">Campaign Information</h2>
-                        <p class="section-description">
-                            Configure the core details of the generated campaign.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="form-grid">
-
-                    <div class="form-group">
-                        <label class="form-label required">Campaign Topic</label>
-
-                        <input
-                            type="text"
-                            name="name"
-                            class="form-input"
-                            placeholder="e.g., Launch our new winter olive-oil moisturizer"
-                            maxlength="300"
-                            value="{{ old('name') }}"
-                            required
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label required">Campaign Objective</label>
-
-                        <select name="objective" id="objectiveSelect" class="form-input" required>
-                            <option value="">Select objective</option>
-
-                            @foreach ([
-                                'Awareness — get the business noticed',
-                                'Engagement — start conversations and comments',
-                                'Offer / promotion — push a specific deal',
-                                'Link clicks — send people to a link',
-                                'Brand — share story, values, connection',
-                            ] as $option)
-                                <option value="{{ $option }}" @selected(old('objective') === $option)>
-                                    {{ $option }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                </div>
-
-                <div class="form-grid conditional-field hidden" id="offerDetailsGroup">
-
-                    <div class="form-group">
-                        <label class="form-label required">Offer Type</label>
-
-                        <select name="offer_type" class="form-input">
-                            <option value="">Select offer type</option>
-
-                            @foreach ([
-                                'Percentage discount',
-                                'Amount discount',
-                                'Free delivery',
-                                'Buy X get Y',
-                                'Gift with purchase',
-                                'Bundle price',
-                                'Other',
-                            ] as $option)
-                                <option value="{{ $option }}" @selected(old('offer_type') === $option)>
-                                    {{ $option }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Offer Value</label>
-
-                        <input
-                            type="text"
-                            name="offer_value"
-                            class="form-input"
-                            maxlength="40"
-                            placeholder="e.g., 20% off"
-                            value="{{ old('offer_value') }}"
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Offer Deadline</label>
-
-                        <input
-                            type="date"
-                            name="offer_deadline"
-                            class="form-input"
-                            value="{{ old('offer_deadline') }}"
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Promo Code</label>
-
-                        <input
-                            type="text"
-                            name="offer_code"
-                            class="form-input"
-                            maxlength="30"
-                            placeholder="e.g., WINTER20"
-                            value="{{ old('offer_code') }}"
-                        >
-                    </div>
-
-                    <div class="form-group full-span">
-                        <label class="form-label">Conditions</label>
-
-                        <textarea
-                            name="offer_conditions"
-                            class="form-textarea"
-                            maxlength="150"
-                            placeholder="e.g., Valid on selected items only."
-                        >{{ old('offer_conditions') }}</textarea>
-                    </div>
-
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Campaign Description</label>
-
-                    <textarea
-                        name="description"
-                        class="form-textarea"
-                        maxlength="3000"
-                        placeholder="Add any extra campaign context, theme, or important notes..."
-                    >{{ old('description') }}</textarea>
-                </div>
-
-            </div>
-
-            <div class="table-card">
-
-                <div class="section-header">
-                    <div>
                         <h2 class="section-title">Client & Persona</h2>
                         <p class="section-description">
                             Select the business and target audience persona.
@@ -228,6 +92,143 @@
                 </div>
 
             </div>
+            
+            <div class="table-card">
+
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Campaign Information</h2>
+                        <p class="section-description">
+                            Configure the core details of the generated campaign.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label class="form-label required">Campaign Name</label>
+
+                        <input
+                            type="text"
+                            name="name"
+                            class="form-input"
+                            placeholder="Enter your campaign name"
+                            maxlength="300"
+                            value="{{ old('name') }}"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required">Campaign Objective</label>
+
+                        <select name="objective" id="objectiveSelect" class="form-input" required>
+                            <option value="">Select objective</option>
+
+                            @foreach ([
+                                'Awareness — get the business noticed',
+                                'Engagement — start conversations and comments',
+                                'Offer / promotion — push a specific deal',
+                                'Link clicks — send people to a link',
+                                'Brand — share story, values, connection',
+                            ] as $option)
+                                <option value="{{ $option }}" @selected(old('objective') === $option)>
+                                    {{ $option }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="form-grid conditional-field hidden" id="offerDetailsGroup">
+
+                    <div class="form-group">
+                        <label class="form-label required">Offer Type</label>
+
+                        <select name="offer_type" class="form-input" id="offerTypeSelect">
+                            <option value="">Select offer type</option>
+
+                            @foreach ([
+                                'Percentage discount',
+                                'Amount discount',
+                                'Free delivery',
+                                'Buy X get Y',
+                                'Gift with purchase',
+                                'Bundle price',
+                                'Other',
+                            ] as $option)
+                                <option value="{{ $option }}" @selected(old('offer_type') === $option)>
+                                    {{ $option }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Offer Value</label>
+
+                        <input
+                            type="text"
+                            name="offer_value"
+                            id="offerValueInput"
+                            class="form-input"
+                            maxlength="40"
+                            placeholder="e.g., 20% off"
+                            value="{{ old('offer_value') }}"
+                        >
+                    </div>
+                    <div class="form-group full-span campaign-conditions">
+                        <label class="form-label">Conditions</label>
+
+                        <textarea
+                            name="offer_conditions"
+                            class="form-textarea"
+                            maxlength="150"
+                            placeholder="e.g., Valid on selected items only."
+                        >{{ old('offer_conditions') }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Offer Deadline</label>
+
+                        <input
+                            type="date"
+                            name="offer_deadline"
+                            class="form-input"
+                            value="{{ old('offer_deadline') }}"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Promo Code</label>
+
+                        <input
+                            type="text"
+                            name="offer_code"
+                            class="form-input"
+                            maxlength="30"
+                            placeholder="e.g., WINTER20"
+                            value="{{ old('offer_code') }}"
+                        >
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Campaign Description</label>
+
+                    <textarea
+                        name="description"
+                        class="form-textarea campaign-description"
+                        maxlength="3000"
+                        placeholder="Add any extra campaign context, theme, or important notes..."
+                    >{{ old('description') }}</textarea>
+                </div>
+
+            </div>
+
 
             <div class="table-card">
 
@@ -256,7 +257,7 @@
 
             </div>
 
-            <div class="table-card">
+            {{-- <div class="table-card">
 
                 <div class="section-header">
                     <div>
@@ -269,24 +270,7 @@
 
                 <div class="form-grid">
 
-                    <div class="form-group">
-                        <label class="form-label required">Format Mode</label>
 
-                        <select name="format_mode" class="form-input" required>
-                            <option value="">Select format</option>
-
-                            @foreach ([
-                                'Images only',
-                                'Reels only',
-                                'Carousels only',
-                                'Let the system decide',
-                            ] as $option)
-                                <option value="{{ $option }}" @selected(old('format_mode') === $option)>
-                                    {{ $option }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
 
                     <div class="form-group">
                         <label class="form-label">Campaign Mood</label>
@@ -309,20 +293,89 @@
                         </select>
                     </div>
 
-                </div>
+                </div> 
 
-            </div>
+            </div> --}}
 
             <div class="table-card">
 
                 <div class="section-header">
                     <div>
-                        <h2 class="section-title">Scheduling</h2>
+                        <h2 class="section-title">Content Settings</h2>
                         <p class="section-description">
-                            Configure campaign duration, channels, and material count.
+                            Configure format mode, campaign duration, channels, and material count.
                         </p>
                     </div>
                 </div>
+
+
+            @php
+                $oldFormatModes = old('format_modes', ['system_decide']);
+            
+                if (! is_array($oldFormatModes)) {
+                    $oldFormatModes = [$oldFormatModes];
+                }
+            @endphp
+            
+            <div class="form-group">
+                <label class="form-label required">Content Formats</label>
+            
+                <p class="input-helper">
+                    Select one or more content formats, or let the system choose the best mix.
+                </p>
+            
+                <div class="checkbox-grid" id="formatModesGrid">
+            
+                    <label class="channel-checkbox">
+                        <input
+                            type="checkbox"
+                            name="format_modes[]"
+                            value="image"
+                            data-specific-format
+                            {{ in_array('image', $oldFormatModes, true) ? 'checked' : '' }}
+                        >
+            
+                        <span>Images</span>
+                    </label>
+            
+                    <label class="channel-checkbox">
+                        <input
+                            type="checkbox"
+                            name="format_modes[]"
+                            value="carousel"
+                            data-specific-format
+                            {{ in_array('carousel', $oldFormatModes, true) ? 'checked' : '' }}
+                        >
+            
+                        <span>Carousels</span>
+                    </label>
+            
+                    <label class="channel-checkbox">
+                        <input
+                            type="checkbox"
+                            name="format_modes[]"
+                            value="reel"
+                            data-specific-format
+                            {{ in_array('reel', $oldFormatModes, true) ? 'checked' : '' }}
+                        >
+            
+                        <span>Reels</span>
+                    </label>
+            
+                    <label class="channel-checkbox">
+                        <input
+                            type="checkbox"
+                            name="format_modes[]"
+                            value="system_decide"
+                            id="systemDecideFormat"
+                            {{ in_array('system_decide', $oldFormatModes, true) ? 'checked' : '' }}
+                        >
+            
+                        <span>Let the system decide</span>
+                    </label>
+            
+                </div>
+            </div>
 
                 <div class="form-grid">
 
@@ -459,7 +512,7 @@
                         <li>Audience persona</li>
                         <li>Campaign objective and offer details</li>
                         <li>Conversion methods</li>
-                        <li>Format mode and campaign mood</li>
+                        <li>Selected content formats</li>
                         <li>Selected channels</li>
                     </ul>
                 </div>
@@ -481,10 +534,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const personaSelect = document.getElementById('personaSelect');
 
     const objectiveSelect = document.getElementById('objectiveSelect');
+    const offerTypeSelect = document.getElementById('offerTypeSelect');
+    const offerValueInput = document.getElementById('offerValueInput');
     const offerDetailsGroup = document.getElementById('offerDetailsGroup');
     const conversionMethodsGrid = document.getElementById('conversionMethodsGrid');
     const postLimitHint = document.getElementById('postLimitHint');
+    const formatModesGrid =
+        document.getElementById('formatModesGrid');
 
+    const systemDecideFormat =
+        document.getElementById('systemDecideFormat');
+
+    const specificFormatInputs =
+        Array.from(
+            document.querySelectorAll('[data-specific-format]')
+        );
     let formChanged = false;
     let formSubmitted = false;
 
@@ -504,8 +568,63 @@ document.addEventListener('DOMContentLoaded', () => {
             ?.toggleAttribute('required', shouldShow);
     }
 
+    function refreshFormatModes() {
+        if (!systemDecideFormat) {
+            return;
+        }
+
+        const systemDecides =
+            systemDecideFormat.checked;
+
+        specificFormatInputs.forEach((input) => {
+            if (systemDecides) {
+                input.checked = false;
+            }
+
+            input.disabled = systemDecides;
+        });
+    }
+    function updateOfferValuePlaceholder() {
+        if (!offerTypeSelect || !offerValueInput) {
+            return;
+        }
+
+        const placeholders = {
+            'Percentage discount':
+                'e.g., 20%',
+
+            'Amount discount':
+                'e.g., $15',
+
+            'Free delivery':
+                'e.g., Orders over $50',
+
+            'Buy X get Y':
+                'e.g., Buy 2 Get 1 Free',
+
+            'Gift with purchase':
+                'e.g., Free makeup bag',
+
+            'Bundle price':
+                'e.g., 3 products for $99',
+
+            'Other':
+                'Describe the offer value',
+        };
+
+        offerValueInput.placeholder =
+            placeholders[offerTypeSelect.value]
+            ?? 'Enter offer value';
+    }
+
     objectiveSelect?.addEventListener('change', refreshOfferDetails);
     refreshOfferDetails();
+        offerTypeSelect?.addEventListener(
+        'change',
+        updateOfferValuePlaceholder
+    );
+
+    updateOfferValuePlaceholder();
 
     function populatePersonas() {
         personaSelect.innerHTML = `
@@ -687,8 +806,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const conversionMethods =
             form.querySelectorAll('[name="conversion_methods[]"]:checked');
 
-        const formatMode =
-            form.querySelector('[name="format_mode"]')?.value;
+        const formatModes =
+            form.querySelectorAll(
+                '[name="format_modes[]"]:checked'
+            );
 
         const startDate =
             form.querySelector('[name="start_date"]')?.value;
@@ -711,7 +832,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 : 0;
 
         if (!name) {
-            return 'Please enter a campaign topic.';
+            return 'Please enter a campaign name.';
         }
 
         if (!objective) {
@@ -737,8 +858,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return 'Please select at least one conversion method.';
         }
 
-        if (!formatMode) {
-            return 'Please select a format mode.';
+        if (formatModes.length === 0) {
+            return 'Please select at least one format.';
         }
 
         if (!startDate) {
@@ -853,6 +974,26 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    systemDecideFormat?.addEventListener('change', () => {
+    refreshFormatModes();
+    formChanged = true;
+});
+
+specificFormatInputs.forEach((input) => {
+    input.addEventListener('change', () => {
+
+        if (input.checked) {
+            systemDecideFormat.checked = false;
+        }
+
+        refreshFormatModes();
+        formChanged = true;
+    });
+});
+
+refreshFormatModes();
+
 });
 </script>
 

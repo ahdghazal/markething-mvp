@@ -52,14 +52,16 @@ class StoreCampaignRequest extends FormRequest
             'requested_posts_count' => ['required', 'integer', 'min:1'],
 
             'description' => ['nullable', 'string', 'max:3000'],
-            'format_mode' => [
+            'format_modes' => ['required', 'array', 'min:1'],
+
+            'format_modes.*' => [
                 'required',
                 'string',
                 Rule::in([
-                    'Images only',
-                    'Reels only',
-                    'Carousels only',
-                    'Let the system decide',
+                    'image',
+                    'carousel',
+                    'reel',
+                    'system_decide',
                 ]),
             ],
             
@@ -85,9 +87,21 @@ class StoreCampaignRequest extends FormRequest
         return [
             'channels.required' => 'Please select at least one channel.',
             'channels.min' => 'Please select at least one channel.',
-            'requested_posts_count.required' => 'Please enter the number of posts.',
-            'conversion_methods.required' => 'Please select at least one conversion method.',
-            'conversion_methods.min' => 'Please select at least one conversion method.',
+        
+            'format_modes.required' =>
+                'Please select at least one content format.',
+        
+            'format_modes.min' =>
+                'Please select at least one content format.',
+        
+            'requested_posts_count.required' =>
+                'Please enter the number of posts.',
+        
+            'conversion_methods.required' =>
+                'Please select at least one conversion method.',
+        
+            'conversion_methods.min' =>
+                'Please select at least one conversion method.',
         ];
     }
 
@@ -95,6 +109,18 @@ class StoreCampaignRequest extends FormRequest
     {
         return [
             function (Validator $validator) {
+
+                $formatModes = $this->input('format_modes', []);
+
+                if (
+                    in_array('system_decide', $formatModes, true) &&
+                    count($formatModes) > 1
+                ) {
+                    $validator->errors()->add(
+                        'format_modes',
+                        '"Let the system decide" cannot be selected together with other content formats.'
+                    );
+                }
 
                 if (
                     ! $this->filled('start_date') ||
